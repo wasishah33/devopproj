@@ -13,16 +13,16 @@ jobs:
 
       - name: Setup SSH key
         run: |
-          echo "${{ secrets.PRIVATE_KEY }}" > key.pem
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > key.pem
           chmod 600 key.pem
 
       - name: Copy project to EC2
         run: |
-          rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" ./ ubuntu@${{ secrets.HOST }}:/home/ubuntu/devopproj
+          rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" ./ ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/devopproj
 
       - name: Deploy on EC2
         run: |
-          ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.HOST }} << 'EOF'
+          ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             cd /home/ubuntu/devopproj
             docker-compose down
             docker-compose up -d --build
